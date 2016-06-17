@@ -3,14 +3,17 @@
 var canvas = document.getElementById('pong');
 var c = canvas.getContext('2d');
 // var origin = c.fillRect(312,154,8,8);
-var rAF = (function() {
+var randomNum = function(min, max) {
+	return Math.random() * (max - min) + min;
+}
+var animate = (function() {
 	return window.requestAnimationFrame || function(callback) {
 		return window.setTimeout(callback, 1000/60);
 	};
 }) ();
 
 function init() {
-	rAF(draw);
+	animate(draw);
 }
 
 function clear() {
@@ -32,7 +35,7 @@ function clear() {
 // Player Brick
 var player = {
 	x: 40,
-	y: 40,
+	y: mouse,
 	width: 20,
 	height: 60,
 	color: "white",
@@ -43,8 +46,8 @@ var player = {
 };
 
 // Maps player brick to mouse's Y position for movement
-canvas.addEventListener('mousemove', function(e) {
-	player.y = e.clientY;
+var mouse = canvas.addEventListener('mousemove', function(e) {
+	player.y = e.offsetY;
 });
 
 // Opponent Brick
@@ -96,14 +99,25 @@ function draw() {
 		ball.vx = -ball.vx;
 	}
 	// Ball Collision with Player and Opponent
-	if (ball.x + ball.vx == player.draw() || ball.x + ball.vx == opponent.draw()) {
-		ball.vx = -ball.vx;
+
+	// Player Collision
+	if ((ball.x + ball.vx) < (player.x + player.width) && (ball.x + ball.width) > player.x && (ball.y + ball.vy) < (player.y + player.height) && (ball.y + ball.height) > player.y) {
+		ball.vx = -ball.vx - randomNum(1,4);
+		ball.vy = -ball.vy - randomNum(1,4);
+		if (ball.x + ball.vx > 7) {
+			ball.x + ball.vx == 5;
+		}
 	}
-	if (ball.y + ball.vy == player.draw() || ball.y + ball.vy == opponent.draw()) {
-		ball.vy = -ball.vy;
+	// Opponent Collision
+	if ((ball.x + ball.vx) < (opponent.x + opponent.width) && (ball.x + ball.width) > opponent.x && (ball.y + ball.vy) < (opponent.y + opponent.height) && (ball.y + ball.height) > opponent.y) {
+		ball.vx = -ball.vx - randomNum(1,4);
+		ball.vy = -ball.vy - randomNum(1,4);
+		if (ball.x + ball.vx > 7) {
+			ball.x + ball.vx == 5;
+		}
 	}
 
-	rAF(draw);
+	animate(draw);
 }
 
 init();
