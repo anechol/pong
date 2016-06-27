@@ -2,10 +2,14 @@
 
 var canvas = document.getElementById('pong');
 var c = canvas.getContext('2d');
-// var origin = c.fillRect(312,154,8,8);
+
 var randomNum = function(min, max) {
 	return Math.random() * (max - min) + min;
 }
+
+var playerScore = 0;
+var opponentScore = 0;
+
 var animate = (function() {
 	return window.requestAnimationFrame || function(callback) {
 		return window.setTimeout(callback, 1000/60);
@@ -20,6 +24,7 @@ function clear() {
 	// Field - This is the entire field, colored black.
 	c.clearRect(0,0,canvas.width,canvas.height);
 	canvas.style.backgroundColor = "black";
+	c.save();
 
 	// Center Division - Divides player sides
 	c.strokeStyle = "white";
@@ -54,7 +59,6 @@ var mouse = canvas.addEventListener('mousemove', function(e) {
 var opponent = {
 	x: 640,
 	y: 120,
-	vy: 5,
 	width: 20,
 	height: 60,
 	color: "white",
@@ -64,10 +68,16 @@ var opponent = {
 	}
 };
 
+function opponentMove() {
+	// Opponent tracks balls and hits in random place, simulating AI
+	// FIXME: Must put a margin of error here so the AI doesn't cheat
+	opponent.y = ball.y - randomNum(30,30);
+}
+
 // Ball Object
 var ball = {
-	x: 312,
-	y: 154,
+	x: canvas.width / 2,
+	y: canvas.height / 2,
 	vx: 5,
 	vy: 5,
 	width: 8,
@@ -79,12 +89,30 @@ var ball = {
 	}
 };
 
+function score() {
+	// FIXME: Bruh, you gotta fix this. Can't do much else without it.
+	// debugger;
+	if (ball.x + ball.vx > canvas.width) {
+		playerScore++;
+	}
+	if (ball.x + ball.vx < 5) {
+		opponentScore++;
+	}
+	c.font = "36px sans-serif";
+	c.fillStyle = "white";
+	c.fillText(playerScore, 165, 30);
 
+	c.font = "36px sans-serif";
+	c.fillStyle = "white";
+	c.fillText(opponentScore, 520, 30);
+}
 // Draws everything on the Canvas
 function draw() {
 	clear();
 	player.draw();
 	opponent.draw();
+	opponentMove();
+	score();
 
 	ball.draw();
 	// Ball Velocity
@@ -95,23 +123,28 @@ function draw() {
 	if (ball.y + ball.vy > canvas.height || ball.y + ball.vy < 0) {
 		ball.vy = -ball.vy;
 	}
+	// Ball reappears in center if crossing the "goals"
 	if (ball.x + ball.vx > canvas.width || ball.x + ball.vx < 0) {
-		ball.vx = -ball.vx;
+		ball.x = canvas.width / 2; // Make the ball reappear in the center.
+		ball.y = canvas.height / 2;
+		ball.vx = 5;
+		ball.vy = 5;
 	}
-	// Ball Collision with Player and Opponent
 
-	// Player Collision
+	// Player Collision with Ball
 	if ((ball.x + ball.vx) < (player.x + player.width) && (ball.x + ball.width) > player.x && (ball.y + ball.vy) < (player.y + player.height) && (ball.y + ball.height) > player.y) {
-		ball.vx = -ball.vx - randomNum(1,4);
-		ball.vy = -ball.vy - randomNum(1,4);
+		// Makes the ball's speed vary when hitting player brick
+		ball.vx = -ball.vx - randomNum(2,4);
+		ball.vy = -ball.vy - randomNum(2,4);
 		if (ball.x + ball.vx > 7) {
 			ball.x + ball.vx == 5;
 		}
 	}
-	// Opponent Collision
+	// Opponent Collision with Ball
 	if ((ball.x + ball.vx) < (opponent.x + opponent.width) && (ball.x + ball.width) > opponent.x && (ball.y + ball.vy) < (opponent.y + opponent.height) && (ball.y + ball.height) > opponent.y) {
-		ball.vx = -ball.vx - randomNum(1,4);
-		ball.vy = -ball.vy - randomNum(1,4);
+		// Makes the ball's speed vary when hitting opponent brick
+		ball.vx = -ball.vx - randomNum(2,4);
+		ball.vy = -ball.vy - randomNum(2,4);
 		if (ball.x + ball.vx > 7) {
 			ball.x + ball.vx == 5;
 		}
