@@ -9,6 +9,7 @@ var randomNum = function(min, max) {
 
 var playerScore = 0;
 var opponentScore = 0;
+var gameEnd = false;
 
 var animate = (function() {
 	return window.requestAnimationFrame || function(callback) {
@@ -91,11 +92,10 @@ var ball = {
 
 function score() {
 	// FIXME: Bruh, you gotta fix this. Can't do much else without it.
-	// debugger;
-	if (ball.x + ball.vx > canvas.width) {
+	if (ball.x > canvas.width) {
 		playerScore++;
 	}
-	if (ball.x + ball.vx < 5) {
+	if (ball.x < 0) {
 		opponentScore++;
 	}
 	c.font = "36px sans-serif";
@@ -106,6 +106,29 @@ function score() {
 	c.fillStyle = "white";
 	c.fillText(opponentScore, 520, 30);
 }
+
+function reset() {
+	// Ball reappears in center if crossing the "goals"
+	if (ball.x > canvas.width || ball.x < 0) {
+		ball.x = canvas.width / 2; // Make the ball reappear in the center.
+		ball.y = canvas.height / 2;
+		ball.vx = 5;
+		ball.vy = 5;
+	}
+	if(playerScore == 2 || opponentScore == 2) {
+		ball.x = canvas.width / 2;
+		ball.y = canvas.height / 2;
+		c.font = "36px sans-serif";
+		c.fillStyle = "white";
+		c.fillText("Game Over!", 250, 200);
+		gameEnd = true;
+	}
+	// if (gameEnd = true) {
+	//
+	// }
+}
+// TODO: Add in a start and end screen where you have to click a button to continue
+
 // Draws everything on the Canvas
 function draw() {
 	clear();
@@ -113,6 +136,7 @@ function draw() {
 	opponent.draw();
 	opponentMove();
 	score();
+	reset();
 
 	ball.draw();
 	// Ball Velocity
@@ -120,15 +144,11 @@ function draw() {
 	ball.y += ball.vy;
 
 	// Ball Collision with Walls
-	if (ball.y + ball.vy > canvas.height || ball.y + ball.vy < 0) {
+	if (ball.y > canvas.height || ball.y < 0) {
 		ball.vy = -ball.vy;
 	}
-	// Ball reappears in center if crossing the "goals"
-	if (ball.x + ball.vx > canvas.width || ball.x + ball.vx < 0) {
-		ball.x = canvas.width / 2; // Make the ball reappear in the center.
-		ball.y = canvas.height / 2;
-		ball.vx = 5;
-		ball.vy = 5;
+	if (ball.x > canvas.width || ball.x < 0) {
+		ball. vx = -ball.vx;
 	}
 
 	// Player Collision with Ball
