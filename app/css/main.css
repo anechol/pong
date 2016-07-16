@@ -1,4 +1,18 @@
+@import 'https://fonts.googleapis.com/css?family=Roboto';
+body {
+  font-family: 'Roboto', sans-serif; }
+
 #pong {
-  display: block;
-  border: 1px solid black;
   margin: 0 auto; }
+
+#startPage {
+  background: black;
+  margin: 0 auto;
+  width: 700px;
+  height: 400px; }
+  #startPage .text {
+    display: block;
+    height: 50%;
+    color: white;
+    font-size: 36px;
+    text-align: center; }

@@ -1,11 +1,11 @@
-'use strict';
-
 var canvas = document.getElementById('pong');
 var c = canvas.getContext('2d');
+var startPage = document.getElementById('startPage');
+var gameOver = document.getElementById('gameOver');
 
 var randomNum = function(min, max) {
 	return Math.random() * (max - min) + min;
-}
+};
 
 var playerScore = 0;
 var opponentScore = 0;
@@ -120,16 +120,15 @@ function reset() {
 		ball.x = canvas.width / 2;
 		ball.y = canvas.height / 2;
 		clear();
-		gameEnd = true;
 		c.font = "36px sans-serif";
 		c.fillStyle = "white";
 		c.fillText("Game Over!", 250, 200);
 	}
-	if (gameEnd = true) {
-		canvas.onclick = function() {
-			startGame();
-		}
-	}
+	// if (gameEnd = true) {
+	// 	canvas.onclick = function() {
+	// 		startGame();
+	// 	};
+	// }
 }
 // TODO: Add in a start and end screen where you have to click a button to continue
 
@@ -137,23 +136,26 @@ var startButton = function() {
 	c.font = "36px sans-serif";
 	c.fillStyle = "white";
 	c.fillText("Start", 310, 210);
-}
+};
 
 // Draws everything on the Canvas
 function draw() {
 	function startGame() {
 		window.onload = function() {
-			clear();
-			startButton();
-			// playing = false;
-		}
-		canvas.addEventListener('click', function() {
-			startButton();
-		});
-		canvas.onclick = function() {
-			canvas.removeEventListener('click', startButton);
+			// clear();
+			// startButton();
+			startPage.style.display = 'block';
+			canvas.style.display = 'none';
+			gameOver.style.display = 'none';
+		};
 
-			animate(draw);
+		// FIXME: Pls fix this. Needs to work properly
+		startPage.onclick = function() {
+			startPage.style.display = 'none';
+			canvas.style.display = 'block';
+			gameOver.style.display = 'none';
+		};
+		if (canvas.style.display == 'block') {
 			clear();
 			player.draw();
 			opponent.draw();
@@ -162,6 +164,7 @@ function draw() {
 			reset();
 			ball.draw();
 		}
+
 	}
 
 	// Ball Velocity
@@ -194,7 +197,6 @@ function draw() {
 			ball.x + ball.vx == 5;
 		}
 	}
-
 	startGame();
 	animate(draw);
 }
