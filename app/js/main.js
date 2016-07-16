@@ -106,7 +106,30 @@ function score() {
 	c.fillText(opponentScore, 520, 30);
 }
 
+function startGame() {
+	window.onload = function() {
+		startPage.style.display = 'block';
+		canvas.style.display = 'none';
+		gameOver.style.display = 'none';
+	};
 
+	// FIXME: Pls fix this. Needs to work properly
+	startPage.onclick = function() {
+		startPage.style.display = 'none';
+		canvas.style.display = 'block';
+		gameOver.style.display = 'none';
+	};
+	if (canvas.style.display == 'block') {
+		// FIXME: Put a stop animation here because the game seems to be running when the screen isn't up.
+		clear();
+		player.draw();
+		opponent.draw();
+		opponentMove();
+		score();
+		reset();
+		ball.draw();
+	}
+}
 
 function reset() {
 	// Ball reappears in center if crossing the "goals"
@@ -119,53 +142,35 @@ function reset() {
 	if (playerScore == 2 || opponentScore == 2) {
 		ball.x = canvas.width / 2;
 		ball.y = canvas.height / 2;
-		clear();
-		c.font = "36px sans-serif";
-		c.fillStyle = "white";
-		c.fillText("Game Over!", 250, 200);
-	}
-	// if (gameEnd = true) {
-	// 	canvas.onclick = function() {
-	// 		startGame();
-	// 	};
-	// }
-}
-// TODO: Add in a start and end screen where you have to click a button to continue
 
-var startButton = function() {
-	c.font = "36px sans-serif";
-	c.fillStyle = "white";
-	c.fillText("Start", 310, 210);
-};
+		startPage.style.display = 'none';
+		canvas.style.display = 'none';
+		gameOver.style.display = 'block';
+
+		// FIXME: MAKE THIS WORK, YOU'RE ALMOST DONE DAMMIT
+		if (gameOver.style.display == 'block') {
+			gameOver.onclick = function() {
+				startPage.style.display = 'block';
+				canvas.style.display = 'none';
+				gameOver.style.display = 'none';
+
+				if (startPage.style.display == 'block') {
+					clear();
+					player.draw();
+					opponent.draw();
+					opponentMove();
+					score();
+					ball.draw();
+				}
+			};
+		}
+	}
+}
 
 // Draws everything on the Canvas
 function draw() {
-	function startGame() {
-		window.onload = function() {
-			// clear();
-			// startButton();
-			startPage.style.display = 'block';
-			canvas.style.display = 'none';
-			gameOver.style.display = 'none';
-		};
-
-		// FIXME: Pls fix this. Needs to work properly
-		startPage.onclick = function() {
-			startPage.style.display = 'none';
-			canvas.style.display = 'block';
-			gameOver.style.display = 'none';
-		};
-		if (canvas.style.display == 'block') {
-			clear();
-			player.draw();
-			opponent.draw();
-			opponentMove();
-			score();
-			reset();
-			ball.draw();
-		}
-
-	}
+	startGame();
+	reset();
 
 	// Ball Velocity
 	ball.x += ball.vx;
@@ -197,7 +202,6 @@ function draw() {
 			ball.x + ball.vx == 5;
 		}
 	}
-	startGame();
 	animate(draw);
 }
 
