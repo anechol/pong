@@ -9,7 +9,6 @@ var randomNum = function(min, max) {
 
 var playerScore = 0;
 var opponentScore = 0;
-var playing;
 
 var animate = (function() {
 	return window.requestAnimationFrame || function(callback) {
@@ -27,7 +26,7 @@ function clear() {
 	canvas.style.backgroundColor = "black";
 	c.save();
 
-	// Center Division - Divides player sides
+	// Center Division - Divides player sides. Cosmetics only.
 	c.strokeStyle = "white";
 	c.setLineDash([10, 5]);
 	c.beginPath();
@@ -72,7 +71,16 @@ var opponent = {
 function opponentMove() {
 	// Opponent tracks balls and hits in random place, simulating AI
 	// FIXME: Must put a margin of error here so the AI doesn't cheat
-	opponent.y = ball.y - randomNum(30, 30);
+	var diff = -((opponent.y + (opponent.height / 2)) - ball.y);
+	if (diff < 0 && diff < -4) {
+		diff = -5;
+	}
+	else if (diff > 0 && diff > 4) {
+		diff = 5;
+	}
+
+
+	opponent.y = ball.y - randomNum(diff, diff) - 10;
 }
 
 // Ball Object
@@ -91,6 +99,7 @@ var ball = {
 };
 
 function score() {
+	// Players score when the ball reaches the edges of the screens
 	if (ball.x > canvas.width) {
 		playerScore++;
 	}
@@ -113,20 +122,19 @@ function startGame() {
 		gameOver.style.display = 'none';
 	};
 
-	// FIXME: Pls fix this. Needs to work properly
 	startPage.onclick = function() {
 		startPage.style.display = 'none';
 		canvas.style.display = 'block';
 		gameOver.style.display = 'none';
 	};
 	if (canvas.style.display == 'block') {
-		// FIXME: Put a stop animation here because the game seems to be running when the screen isn't up.
+		// FIXME: Put a stop animation here because the game seems to be
+		// running when the screen isn't up.
 		clear();
 		player.draw();
 		opponent.draw();
 		opponentMove();
 		score();
-		reset();
 		ball.draw();
 	}
 }
@@ -134,11 +142,13 @@ function startGame() {
 function reset() {
 	// Ball reappears in center if crossing the "goals"
 	if (ball.x > canvas.width || ball.x < 0) {
-		ball.x = canvas.width / 2; // Make the ball reappear in the center.
+		// Make the ball reappear in the center with velocity of
+		ball.x = canvas.width / 2;
 		ball.y = canvas.height / 2;
 		ball.vx = 5;
 		ball.vy = 5;
 	}
+	// When either player reaches the score goal, the game ends, and the Game Over screen shows
 	if (playerScore == 2 || opponentScore == 2) {
 		ball.x = canvas.width / 2;
 		ball.y = canvas.height / 2;
@@ -147,21 +157,21 @@ function reset() {
 		canvas.style.display = 'none';
 		gameOver.style.display = 'block';
 
-		// FIXME: MAKE THIS WORK, YOU'RE ALMOST DONE DAMMIT
+		// This lets the game loop when it's reset after a win/loss.
 		if (gameOver.style.display == 'block') {
 			gameOver.onclick = function() {
 				startPage.style.display = 'block';
 				canvas.style.display = 'none';
 				gameOver.style.display = 'none';
 
-				if (startPage.style.display == 'block') {
-					clear();
-					player.draw();
-					opponent.draw();
-					opponentMove();
-					score();
-					ball.draw();
-				}
+				playerScore = 0;
+				opponentScore = 0;
+
+				ball.x = canvas.width / 2;
+				ball.y = canvas.height / 2;
+
+				ball.vx = 5;
+				ball.vy = 5;
 			};
 		}
 	}
