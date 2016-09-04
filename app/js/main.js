@@ -79,7 +79,6 @@ function opponentMove() {
 		diff = 5;
 	}
 
-
 	opponent.y = ball.y - randomNum(diff, diff) - 10;
 }
 
@@ -149,7 +148,7 @@ function reset() {
 		ball.vy = 5;
 	}
 	// When either player reaches the score goal, the game ends, and the Game Over screen shows
-	if (playerScore == 2 || opponentScore == 2) {
+	if (playerScore == 5 || opponentScore == 5) {
 		ball.x = canvas.width / 2;
 		ball.y = canvas.height / 2;
 

@@ -1,6 +1,7 @@
 @import 'https://fonts.googleapis.com/css?family=Roboto';
 body {
-  font-family: 'Roboto', sans-serif; }
+  font-family: 'Roboto', sans-serif;
+  background-color: #b3b3b3; }
 
 #pong {
   margin: 0 auto; }
